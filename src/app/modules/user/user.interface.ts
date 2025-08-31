@@ -6,7 +6,7 @@ export enum UserRole {
 }
 
 export interface IAuthProvider {
-  provider: "google" | "facebook" | "twitter" | "github";
+  provider: "google" | "facebook" | "twitter" | "github" | "credentials";
   providerId: string;
 }
 
