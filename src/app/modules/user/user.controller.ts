@@ -2,7 +2,7 @@ import httpStatus from "http-status-codes";
 import catchAsync from "../../utils/catchAsync";
 import { NextFunction, Request, Response } from "express";
 import { User } from "./user.model";
-import { UserService } from "./userService";
+import { UserService } from "./user.service";
 import { sendResponse } from "../../utils/sendResponse";
 
 const createUser = catchAsync(
