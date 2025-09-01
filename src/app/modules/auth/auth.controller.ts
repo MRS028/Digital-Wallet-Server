@@ -19,6 +19,20 @@ const credentialsLogin = catchAsync(
     }
 );
 
+const register = catchAsync(
+    async (req:Request,res:Response,next:NextFunction) => {
+        const newUser = await AuthService.registerUser(req.body);
+
+        sendResponse(res , {
+            success: true,
+            httpStatus: httpStatus.CREATED,
+            data: newUser,
+            message: "User registered successfully"
+        })
+    }
+);
+
 export const AuthController = {
+    register,
     credentialsLogin
 };

@@ -30,7 +30,54 @@ const getAllUsers = catchAsync(
   }
 );
 
+const addMoney = catchAsync(async (req: Request, res: Response) => {
+  const { amount } = req.body;
+  const result = await UserService.addMoney(req.user.id, amount);
+  sendResponse(res, {
+    httpStatus: httpStatus.OK,
+    success: true,
+    message: 'Money added successfully',
+    data: result,
+  });
+});
+
+const withdrawMoney = catchAsync(async (req: Request, res: Response) => {
+  const { amount } = req.body;
+  const result = await UserService.withdrawMoney(req.user.id, amount);
+  sendResponse(res, {
+    httpStatus: httpStatus.OK,
+    success: true,
+    message: 'Money withdrawn successfully',
+    data: result,
+  });
+});
+
+const sendMoney = catchAsync(async (req: Request, res: Response) => {
+  const { receiverPhoneNumber, amount } = req.body;
+  const result = await UserService.sendMoney(req.user.id, receiverPhoneNumber, amount);
+  sendResponse(res, {
+    httpStatus: httpStatus.OK,
+    success: true,
+    message: 'Money sent successfully',
+    data: result,
+  });
+});
+
+const getTransactionHistory = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserService.getTransactionHistory(req.user.id);
+  sendResponse(res, {
+    httpStatus: httpStatus.OK,
+    success: true,
+    message: 'Transaction history fetched successfully',
+    data: result,
+  });
+});
+
 export const UserController = {
   createUser,
   getAllUsers,
+  addMoney,
+  withdrawMoney,
+  sendMoney,
+  getTransactionHistory,
 };

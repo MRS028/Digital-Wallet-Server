@@ -15,10 +15,11 @@ interface EnvConfig {
   AGENT_COMMISSION?: string;
   RATE_LIMIT_WINDOW_MS?: string;
   RATE_LIMIT_MAX_REQUESTS?: string;
+  INITIAL_BALANCE: string;
 }
 
 const loadEnvVariables = (): EnvConfig => {
-  const requiredEnvVariables = ["PORT", "DB_URL", "NODE_ENV", "JWT_SECRET", "JWT_EXPIRES_IN", "BCRYPT_SALT_ROUNDS", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD"];
+  const requiredEnvVariables = ["PORT", "DB_URL", "NODE_ENV", "JWT_SECRET", "JWT_EXPIRES_IN", "BCRYPT_SALT_ROUNDS", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD", "INITIAL_BALANCE"];
 
 requiredEnvVariables.forEach((envVariable) => {
   if (!process.env[envVariable]) {
@@ -39,6 +40,7 @@ requiredEnvVariables.forEach((envVariable) => {
     AGENT_COMMISSION: process.env.AGENT_COMMISSION as string,
     RATE_LIMIT_WINDOW_MS: process.env.RATE_LIMIT_WINDOW_MS as string,
     RATE_LIMIT_MAX_REQUESTS: process.env.RATE_LIMIT_MAX_REQUESTS as string,
+    INITIAL_BALANCE: process.env.INITIAL_BALANCE as string,
   };
 };
 
