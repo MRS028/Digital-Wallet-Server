@@ -62,7 +62,7 @@ const cashIn = async (agentId: string, receiverPhoneNumber: string, amount: numb
     await session.commitTransaction();
     session.endSession();
 
-    return transaction[0];
+    return { transaction: transaction[0], newBalance: receiverWallet.balance };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -128,7 +128,7 @@ const cashOut = async (agentId: string, senderPhoneNumber: string, amount: numbe
     await session.commitTransaction();
     session.endSession();
 
-    return transaction[0];
+    return { transaction: transaction[0], newBalance: senderWallet.balance };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -146,8 +146,20 @@ const getCommissionHistory = async (agentId: string) => {
   return commissionHistory;
 };
 
+const getWalletBalance = async (agentId: string) => {
+  const agentWallet = await Wallet.findOne({ user: agentId });
+  if (!agentWallet) {
+    throw new AppError('Agent wallet not found', httpStatus.NOT_FOUND);
+  }
+  if (agentWallet.status !== isActive.ACTIVE) {
+    throw new AppError('Agent wallet is not active', httpStatus.BAD_REQUEST);
+  }
+  return { balance: agentWallet.balance };
+};
+
 export const AgentService = {
   cashIn,
   cashOut,
   getCommissionHistory,
+  getWalletBalance,
 };

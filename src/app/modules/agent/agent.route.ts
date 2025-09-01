@@ -23,4 +23,10 @@ router.get(
   AgentController.getCommissionHistory,
 );
 
+router.get(
+  '/balance',
+  checkAuth(UserRole.AGENT),
+  AgentController.getWalletBalance,
+);
+
 export const AgentRoutes = router;

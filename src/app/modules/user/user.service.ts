@@ -49,7 +49,7 @@ const addMoney = async (userId: string, amount: number) => {
     await session.commitTransaction();
     session.endSession();
 
-    return transaction[0];
+    return { transaction: transaction[0], newBalance: userWallet.balance };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -112,7 +112,7 @@ const withdrawMoney = async (userId: string, amount: number) => {
     await session.commitTransaction();
     session.endSession();
 
-    return transaction[0];
+    return { transaction: transaction[0], newBalance: userWallet.balance };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -191,7 +191,7 @@ const sendMoney = async (senderId: string, receiverPhoneNumber: string, amount: 
     await session.commitTransaction();
     session.endSession();
 
-    return transaction[0];
+    return { transaction: transaction[0], newBalance: senderWallet.balance };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -226,6 +226,17 @@ const getAllUsers = async () => {
   };
 };
 
+const getWalletBalance = async (userId: string) => {
+  const userWallet = await Wallet.findOne({ user: userId });
+  if (!userWallet) {
+    throw new AppError('User wallet not found', httpStatus.NOT_FOUND);
+  }
+  if (userWallet.status !== isActive.ACTIVE) {
+    throw new AppError('User wallet is not active', httpStatus.BAD_REQUEST);
+  }
+  return { balance: userWallet.balance };
+};
+
 export const UserService = {
   createUser,
   getAllUsers,
@@ -233,4 +244,5 @@ export const UserService = {
   withdrawMoney,
   sendMoney,
   getTransactionHistory,
+  getWalletBalance,
 };

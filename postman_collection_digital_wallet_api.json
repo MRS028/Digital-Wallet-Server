@@ -307,6 +307,29 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "Get Wallet Balance (User)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{userToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/balance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "user",
+                "balance"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -393,6 +416,29 @@
               "path": [
                 "agent",
                 "commission-history"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Wallet Balance (Agent)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{agentToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/agent/balance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "agent",
+                "balance"
               ]
             }
           },

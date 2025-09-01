@@ -38,6 +38,12 @@ router.get(
 );
 
 router.get(
+  "/balance",
+  checkAuth(UserRole.USER),
+  UserController.getWalletBalance
+);
+
+router.get(
   "/all-users",
   checkAuth(UserRole.ADMIN, UserRole.SUPER_ADMIN), // Only admins can view all users
   UserController.getAllUsers
