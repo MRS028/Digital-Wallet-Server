@@ -11,6 +11,10 @@ interface EnvConfig {
   BCRYPT_SALT_ROUNDS: string;
   SUPER_ADMIN_EMAIL: string;
   SUPER_ADMIN_PASSWORD: string;
+  TRANSACTION_FEE?: string;
+  AGENT_COMMISSION?: string;
+  RATE_LIMIT_WINDOW_MS?: string;
+  RATE_LIMIT_MAX_REQUESTS?: string;
 }
 
 const loadEnvVariables = (): EnvConfig => {
@@ -31,6 +35,10 @@ requiredEnvVariables.forEach((envVariable) => {
     BCRYPT_SALT_ROUNDS: process.env.BCRYPT_SALT_ROUNDS as string,
     SUPER_ADMIN_EMAIL: process.env.SUPER_ADMIN_EMAIL as string,
     SUPER_ADMIN_PASSWORD: process.env.SUPER_ADMIN_PASSWORD as string,
+    TRANSACTION_FEE: process.env.TRANSACTION_FEE as string,
+    AGENT_COMMISSION: process.env.AGENT_COMMISSION as string,
+    RATE_LIMIT_WINDOW_MS: process.env.RATE_LIMIT_WINDOW_MS as string,
+    RATE_LIMIT_MAX_REQUESTS: process.env.RATE_LIMIT_MAX_REQUESTS as string,
   };
 };
 
