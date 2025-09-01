@@ -8,21 +8,29 @@ export const globalErrorHandlers = (
   res: Response,
   next: NextFunction
 ) => {
+  // default values
   let statusCode = 500;
   let message = "Something went wrong";
 
   if (error instanceof customError) {
     statusCode = error.statusCode;
-    message = error.message;
+    message = error.message || "Unexpected error occurred";
   } else if (error instanceof Error) {
-    statusCode = 500;
-    message = error.message;
+    message = error.message || "Unexpected server error";
   }
 
-  res.status(error.statusCode || 500).json({
+  const responsePayload: Record<string, any> = {
     success: false,
-    message: `${error.message}`,
-    error,
-    stack: envVars.NODE_ENV === "development" ? error.stack : null,
-  });
+    message,
+    statusCode,
+
+  };
+
+  // show stack trace only in development
+  if (envVars.NODE_ENV === "development") {
+    responsePayload.stack = error.stack;
+    responsePayload.errorName = error.name;
+  }
+
+  res.status(statusCode).json(responsePayload);
 };

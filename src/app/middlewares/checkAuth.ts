@@ -1,9 +1,9 @@
 import httpStatus from "http-status-codes";
-import { NextFunction, Request, Response } from "express";
-import customError from "../errorHelper/customErrror";
+import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../utils/jwt";
 import { envVars } from "../config/env";
 import { JwtPayload } from "jsonwebtoken";
+import customError from "../errorHelper/customErrror";
 
 export const checkAuth =
   (...authRoles: string[]) =>
@@ -15,40 +15,38 @@ export const checkAuth =
         throw new customError("No token provided", httpStatus.UNAUTHORIZED);
       }
 
-      // Extract token only
       const token = authHeader.split(" ")[1];
+      if (!token) {
+        throw new customError("Token is missing", httpStatus.UNAUTHORIZED);
+      }
 
-      // Verify token
-      const verifiedToken = verifyToken(
-        token,
-        envVars.JWT_SECRET
-      ) as JwtPayload;
+      let verifiedToken: JwtPayload;
 
-      // Check role if roles are provided
-      if (authRoles.length > 0 && !authRoles.includes(verifiedToken.role)) {
+      try {
+        verifiedToken = verifyToken(token, envVars.JWT_SECRET) as JwtPayload;
+      } catch (err: any) {
+        // JWT-specific errors
+        if (err.name === "JsonWebTokenError") {
+          throw new customError("Invalid token", httpStatus.UNAUTHORIZED);
+        }
+        if (err.name === "TokenExpiredError") {
+          throw new customError("Token expired", httpStatus.UNAUTHORIZED);
+        }
+        // Other unknown JWT errors
+        throw new customError("Internal server error", httpStatus.INTERNAL_SERVER_ERROR);
+      }
+
+      // Role-based check
+      if (authRoles.length && !authRoles.includes(verifiedToken.role)) {
         throw new customError(
           "You are not authorized to access this resource",
           httpStatus.FORBIDDEN
         );
       }
 
-      // Attach user info to request
-      (req as any).user = verifiedToken;
-
+      req.user = verifiedToken;
       next();
     } catch (error: any) {
-      console.error("Auth error:", error.message);
-
-      if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
-        return next(new customError("Invalid or expired token", httpStatus.UNAUTHORIZED));
-      }
-
-      if (error instanceof customError) {
-        return next(error); // preserve custom errors like unauthorized/forbidden
-      }
-
-      return next(
-        new customError("Internal server error", httpStatus.INTERNAL_SERVER_ERROR)
-      );
+      next(error); // Pass all errors to global error handler
     }
   };

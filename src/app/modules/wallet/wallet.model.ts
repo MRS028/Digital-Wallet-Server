@@ -9,12 +9,12 @@ const walletSchema = new Schema<IWallet>(
       type: Schema.Types.ObjectId,
       required: true,
       unique: true,
-      ref: 'User', // Reference to the User model
+      ref: 'User', 
     },
     balance: {
       type: Number,
       required: true,
-      default: Number(envVars.INITIAL_BALANCE), // Initial balance from environment variables
+      default: Number(envVars.INITIAL_BALANCE), 
       min: [0, 'Balance cannot be negative'],
     },
     status: {

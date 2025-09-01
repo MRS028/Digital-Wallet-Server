@@ -66,7 +66,7 @@ const userSchema = new Schema<IUser>(
     status: {
       type: String,
       enum: Object.values(agentStatus),
-      default: agentStatus.PENDING,
+      required: false,
     },
     commissionRate: {
       type: Number,
@@ -79,7 +79,7 @@ const userSchema = new Schema<IUser>(
     },
     approvedBy: {
       type: String,
-      ref: "User", // Reference to an Admin User
+      ref: "User",
     },
   },
   {

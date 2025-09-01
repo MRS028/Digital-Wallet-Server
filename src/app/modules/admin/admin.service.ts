@@ -8,12 +8,12 @@ import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 
 const getAllUsers = async () => {
-  const users = await User.find({ role: UserRole.USER }).populate('wallet'); // Assuming wallet is populated
+  const users = await User.find({ role: UserRole.USER });
   return users;
 };
 
 const getAllAgents = async () => {
-  const agents = await User.find({ role: UserRole.AGENT }).populate('wallet');
+  const agents = await User.find({ role: UserRole.AGENT });
   return agents;
 };
 

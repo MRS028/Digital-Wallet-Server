@@ -42,9 +42,9 @@ export interface IUser {
   createdAt?: Date;
   updatedAt?: Date;
 
-  // Agent-specific fields (optional, only if role is AGENT)
+  // Agent-specific fields (only applicable if role is AGENT)
   agentCode?: string;
-  status?: agentStatus; // Using agentStatus for agent's status
+  status?: agentStatus;
   commissionRate?: number;
   approvalDate?: Date;
   approvedBy?: string; // Reference to Admin user ID
