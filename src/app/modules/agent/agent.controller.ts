@@ -3,27 +3,26 @@ import catchAsync from '../../utils/catchAsync';
 import { sendResponse } from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import { AgentService } from './agent.service';
- // Assuming AgentService will be created
 
 const cashIn = catchAsync(async (req: Request, res: Response) => {
   const { receiverPhoneNumber, amount } = req.body;
-  const { transaction, newBalance } = await AgentService.cashIn(req.user.id, receiverPhoneNumber, amount);
+  const { transaction, agentNewBalance, userNewBalance } = await AgentService.cashIn(req.user.id, receiverPhoneNumber, amount);
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
     message: 'Cash-in completed successfully',
-    data: { transaction, newBalance },
+    data: { transaction, agentNewBalance, userNewBalance },
   });
 });
 
 const cashOut = catchAsync(async (req: Request, res: Response) => {
   const { senderPhoneNumber, amount } = req.body;
-  const { transaction, newBalance } = await AgentService.cashOut(req.user.id, senderPhoneNumber, amount);
+  const { transaction, agentNewBalance, userNewBalance } = await AgentService.cashOut(req.user.id, senderPhoneNumber, amount);
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
     message: 'Cash-out completed successfully',
-    data: { transaction, newBalance },
+    data: { transaction, agentNewBalance, userNewBalance },
   });
 });
 
