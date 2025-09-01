@@ -1,5 +1,7 @@
 import { model, Schema } from "mongoose";
 import { IAuthProvider, isActive, IUser, UserRole } from "./user.interface";
+import { agentStatus } from "../agent/agent.interface"; // Import agentStatus
+import { envVars } from "../../config/env"; // Import envVars
 
 export const authProviderSchema = new Schema<IAuthProvider>(
   {
@@ -48,6 +50,37 @@ const userSchema = new Schema<IUser>(
     auths: [authProviderSchema],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
+
+    // Agent-specific fields
+    agentCode: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows null values to not violate unique constraint
+      trim: true,
+      uppercase: true,
+      match: [
+        /^[A-Z0-9]{6,10}$/,
+        "Agent code must be 6-10 characters long and contain only uppercase letters and numbers",
+      ],
+    },
+    status: {
+      type: String,
+      enum: Object.values(agentStatus),
+      default: agentStatus.PENDING,
+    },
+    commissionRate: {
+      type: Number,
+      default: Number(envVars.AGENT_COMMISSION),
+      min: [0, "Commission rate cannot be negative"],
+      max: [10, "Commission rate cannot exceed 10%"],
+    },
+    approvalDate: {
+      type: Date,
+    },
+    approvedBy: {
+      type: String,
+      ref: "User", // Reference to an Admin User
+    },
   },
   {
     timestamps: true,

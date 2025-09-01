@@ -1,5 +1,4 @@
 import { User } from '../user/user.model';
-import { Agent } from '../agent/agent.model';
 import { Wallet } from '../wallet/wallet.model';
 import { Transaction } from '../transaction/transaction.model';
 import { isActive, UserRole } from '../user/user.interface';
@@ -14,7 +13,7 @@ const getAllUsers = async () => {
 };
 
 const getAllAgents = async () => {
-  const agents = await Agent.find({}).populate('wallet'); // Assuming wallet is populated
+  const agents = await User.find({ role: UserRole.AGENT }).populate('wallet');
   return agents;
 };
 
@@ -83,7 +82,7 @@ const approveAgent = async (agentId: string) => {
   session.startTransaction();
 
   try {
-    const agent = await Agent.findById(agentId).session(session);
+    const agent = await User.findOne({ _id: agentId, role: UserRole.AGENT }).session(session);
     if (!agent) {
       throw new AppError('Agent not found', httpStatus.NOT_FOUND);
     }
@@ -110,7 +109,7 @@ const suspendAgent = async (agentId: string) => {
   session.startTransaction();
 
   try {
-    const agent = await Agent.findById(agentId).session(session);
+    const agent = await User.findOne({ _id: agentId, role: UserRole.AGENT }).session(session);
     if (!agent) {
       throw new AppError('Agent not found', httpStatus.NOT_FOUND);
     }

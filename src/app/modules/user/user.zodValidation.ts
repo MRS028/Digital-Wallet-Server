@@ -1,4 +1,4 @@
-import z from "zod";
+import z, { lowercase } from "zod";
 import { isActive, UserRole } from "./user.interface";
 export const createUserSchema = z.object({
   name: z
@@ -7,7 +7,9 @@ export const createUserSchema = z.object({
     .max(50, { message: "Name is too long" }),
   email: z
     .string({ message: "Email Must be String" })
-    .email({ message: "Invalid Email Address" }),
+    .email({ message: "Invalid Email Address" })
+    .transform((val) => val?.toLowerCase().trim()),
+
   password: z
     .string({ message: "Password Must be String" })
     .min(8, { message: "Password is too short" })

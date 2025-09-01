@@ -24,6 +24,9 @@ export interface IUserQuery {
   isActive?: boolean;
 }
 
+
+import { agentStatus } from '../agent/agent.interface'; // Import agentStatus
+
 export interface IUser {
   name: string;
   email: string;
@@ -38,4 +41,11 @@ export interface IUser {
   isDeleted?: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+
+  // Agent-specific fields (optional, only if role is AGENT)
+  agentCode?: string;
+  status?: agentStatus; // Using agentStatus for agent's status
+  commissionRate?: number;
+  approvalDate?: Date;
+  approvedBy?: string; // Reference to Admin user ID
 }

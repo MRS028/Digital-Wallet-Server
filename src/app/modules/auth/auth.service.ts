@@ -2,12 +2,11 @@ import httpStatus from "http-status-codes";
 import customError from "../../errorHelper/customErrror";
 import { User } from "../user/user.model";
 import { IUser } from "../user/user.interface";
-import { IAgent } from "../agent/agent.interface";
+import { agentStatus } from "../agent/agent.interface";
 import bcryptjs from "bcryptjs";
 import jwt, { SignOptions } from "jsonwebtoken";
 
 import { Wallet } from "../wallet/wallet.model";
-import { Agent } from "../agent/agent.model";
 import { UserRole } from "../user/user.interface";
 import { envVars } from "../../config/env";
 import mongoose from "mongoose";
@@ -17,7 +16,22 @@ const registerUser = async (payload: Partial<IUser>) => {
   session.startTransaction();
 
   try {
-    const { password, role, ...userData } = payload;
+    const { password, role, ...otherData } = payload;
+    const email = payload.email;
+    const phoneNumber = payload.phoneNumber;
+    const existingUserWithEmail = await User.findOne({ email, role: { $ne: UserRole.AGENT } }).session(session);
+    const existingAgentWithEmail = await User.findOne({ email, role: UserRole.AGENT }).session(session);
+    if (existingUserWithEmail || existingAgentWithEmail) {
+      throw new customError("Email already registered", httpStatus.CONFLICT);
+    }
+
+    if (phoneNumber) {
+      const existingUserWithPhone = await User.findOne({ phoneNumber, role: { $ne: UserRole.AGENT } }).session(session);
+      const existingAgentWithPhone = await User.findOne({ phoneNumber, role: UserRole.AGENT }).session(session);
+      if (existingUserWithPhone || existingAgentWithPhone) {
+        throw new customError("Phone number already registered", httpStatus.CONFLICT);
+      }
+    }
 
     // Hash password
     const hashedPassword = await bcryptjs.hash(
@@ -27,26 +41,34 @@ const registerUser = async (payload: Partial<IUser>) => {
 
     let newUser;
     if (role === UserRole.AGENT) {
-      // Agent-specific registration
-      const agentPayload = payload as Partial<IAgent>;
-      const { agentCode, ...agentData } = agentPayload;
-      newUser = await Agent.create(
+      const agentData = { ...otherData, email, phoneNumber };
+      const lastAgent = await User.findOne({ role: UserRole.AGENT }, {}, { sort: { 'createdAt': -1 } }).session(session);
+      let newAgentCode = 'AGENT001';
+      if (lastAgent && lastAgent.agentCode) {
+        const lastCodeNum = parseInt(lastAgent.agentCode.replace('AGENT', ''));
+        newAgentCode = 'AGENT' + String(lastCodeNum + 1).padStart(3, '0');
+      }
+
+      newUser = await User.create( 
         [
           {
             ...agentData,
             password: hashedPassword,
             role: UserRole.AGENT,
-            agentCode: agentCode as string, // Ensure agentCode is treated as string
+            agentCode: newAgentCode,
+            status: agentStatus.PENDING, 
+            commissionRate: Number(envVars.AGENT_COMMISSION),
           },
         ],
         { session }
       );
     } else {
-      // User registration
       newUser = await User.create(
         [
           {
-            ...userData,
+            ...otherData,
+            email: email as string,
+            phoneNumber: phoneNumber as string,
             password: hashedPassword,
             role: role || UserRole.USER,
           },
@@ -55,8 +77,8 @@ const registerUser = async (payload: Partial<IUser>) => {
       );
     }
 
-    if (!newUser || newUser.length === 0) {
-      throw new customError("Failed to create user/agent", httpStatus.BAD_REQUEST);
+    if (!newUser || newUser.length === 0 || !newUser[0]._id) {
+      throw new customError("Failed to create user/agent or retrieve user ID", httpStatus.BAD_REQUEST);
     }
 
     // Create wallet for the new user/agent
@@ -73,7 +95,6 @@ const registerUser = async (payload: Partial<IUser>) => {
     await session.commitTransaction();
     session.endSession();
 
-    // Generate JWT token for the newly registered user/agent
     const jwtPayload = {
       id: newUser[0]._id,
       email: newUser[0].email,
@@ -97,7 +118,6 @@ const registerUser = async (payload: Partial<IUser>) => {
 const credentialsLogin = async (payload: Partial<IUser>) => {
   const { email, password } = payload;
 
-  // Validate user credentials
   const isUserExist = await User.findOne({ email });
   if (!isUserExist) {
     throw new customError("User does not exist", httpStatus.BAD_REQUEST);

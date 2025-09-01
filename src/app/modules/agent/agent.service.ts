@@ -3,7 +3,6 @@ import { Wallet } from '../wallet/wallet.model';
 import { Transaction } from '../transaction/transaction.model';
 import { TransactionStatus, TransactionType } from '../transaction/transaction.interface';
 import { User } from '../user/user.model';
-import { Agent } from './agent.model';
 import { UserRole, isActive } from '../user/user.interface';
 import { agentStatus } from './agent.interface';
 import { envVars } from '../../config/env';
@@ -15,8 +14,8 @@ const cashIn = async (agentId: string, receiverPhoneNumber: string, amount: numb
   session.startTransaction();
 
   try {
-    // 1. Validate Agent
-    const agent = await Agent.findById(agentId).session(session);
+    // 1. Validate Agent (now a User with AGENT role)
+    const agent = await User.findOne({ _id: agentId, role: UserRole.AGENT }).session(session);
     if (!agent || agent.status !== agentStatus.ACTIVE) {
       throw new AppError('Agent is not active or does not exist', httpStatus.FORBIDDEN);
     }
@@ -76,8 +75,8 @@ const cashOut = async (agentId: string, senderPhoneNumber: string, amount: numbe
   session.startTransaction();
 
   try {
-    // 1. Validate Agent
-    const agent = await Agent.findById(agentId).session(session);
+    // 1. Validate Agent (now a User with AGENT role)
+    const agent = await User.findOne({ _id: agentId, role: UserRole.AGENT }).session(session);
     if (!agent || agent.status !== agentStatus.ACTIVE) {
       throw new AppError('Agent is not active or does not exist', httpStatus.FORBIDDEN);
     }
@@ -142,7 +141,7 @@ const getCommissionHistory = async (agentId: string) => {
     initiatedBy: agentId,
     initiatedByRole: UserRole.AGENT,
     type: TransactionType.COMMISSION, // Or CASH_IN/CASH_OUT where commission was earned
-  }).populate('sender receiver'); // Populate sender and receiver details
+  }).populate('sender receiver initiatedBy'); // Populate sender and receiver details
 
   return commissionHistory;
 };
