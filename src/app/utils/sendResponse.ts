@@ -1,7 +1,7 @@
 import { Response } from "express";
 
 interface TMeta {
-    totalUsers: number;
+    total: number;
 }
 interface TResponse<T> {
     success: boolean;

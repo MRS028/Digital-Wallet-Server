@@ -5,42 +5,46 @@ import httpStatus from 'http-status';
 import { AdminService } from './admin.service';
 
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
-  const result = await AdminService.getAllUsers();
+  const { data, meta } = await AdminService.getAllUsers();
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
     message: 'All users fetched successfully',
-    data: result,
+    data,
+    meta,
   });
 });
 
 const getAllAgents = catchAsync(async (req: Request, res: Response) => {
-  const result = await AdminService.getAllAgents();
+  const { data, meta } = await AdminService.getAllAgents();
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
     message: 'All agents fetched successfully',
-    data: result,
+    data,
+    meta,
   });
 });
 
 const getAllWallets = catchAsync(async (req: Request, res: Response) => {
-  const result = await AdminService.getAllWallets();
+  const { data, meta } = await AdminService.getAllWallets();
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
     message: 'All wallets fetched successfully',
-    data: result,
+    data,
+    meta,
   });
 });
 
 const getAllTransactions = catchAsync(async (req: Request, res: Response) => {
-  const result = await AdminService.getAllTransactions();
+  const { data, meta } = await AdminService.getAllTransactions();
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
     message: 'All transactions fetched successfully',
-    data: result,
+    data,
+    meta,
   });
 });
 

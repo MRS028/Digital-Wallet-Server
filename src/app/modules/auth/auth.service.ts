@@ -58,6 +58,7 @@ const registerUser = async (payload: Partial<IUser>) => {
             agentCode: newAgentCode,
             status: agentStatus.PENDING, 
             commissionRate: Number(envVars.AGENT_COMMISSION),
+            auths: [{ provider: "credentials", providerId: email as string }], // Populate auths
           },
         ],
         { session }
@@ -71,6 +72,7 @@ const registerUser = async (payload: Partial<IUser>) => {
             phoneNumber: phoneNumber as string,
             password: hashedPassword,
             role: role || UserRole.USER,
+            auths: [{ provider: "credentials", providerId: email as string }], // Populate auths
           },
         ],
         { session }

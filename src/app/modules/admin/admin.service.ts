@@ -9,22 +9,42 @@ import mongoose from 'mongoose';
 
 const getAllUsers = async () => {
   const users = await User.find({ role: UserRole.USER });
-  return users;
+  return {
+    data: users,
+    meta: {
+      total: users.length,
+    },
+  };
 };
 
 const getAllAgents = async () => {
   const agents = await User.find({ role: UserRole.AGENT });
-  return agents;
+  return {
+    data: agents,
+    meta: {
+      total: agents.length,
+    },
+  };
 };
 
 const getAllWallets = async () => {
   const wallets = await Wallet.find({}).populate('user');
-  return wallets;
+  return {
+    data: wallets,
+    meta: {
+      total: wallets.length,
+    },
+  };
 };
 
 const getAllTransactions = async () => {
   const transactions = await Transaction.find({}).populate('sender receiver initiatedBy');
-  return transactions;
+  return {
+    data: transactions,
+    meta: {
+      total: transactions.length,
+    },
+  };
 };
 
 const blockUserWallet = async (userId: string) => {
