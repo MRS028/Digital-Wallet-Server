@@ -33,7 +33,7 @@ const getCommissionHistory = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
-    message: 'Commission history fetched successfully',
+    message: 'Commission history retrieved successfully',
     data: result,
   });
 });
@@ -43,7 +43,7 @@ const getWalletBalance = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
-    message: 'Agent wallet balance fetched successfully',
+    message: 'Agent wallet balance retrieved successfully',
     data: result,
   });
 });

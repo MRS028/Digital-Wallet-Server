@@ -68,7 +68,7 @@ const getTransactionHistory = catchAsync(async (req: Request, res: Response) => 
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
-    message: 'Transaction history fetched successfully',
+    message: 'Transaction history retrieved successfully',
     data: result,
   });
 });
@@ -78,7 +78,7 @@ const getWalletBalance = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
-    message: 'Wallet balance fetched successfully',
+    message: 'Wallet balance retrieved successfully',
     data: result,
   });
 });
