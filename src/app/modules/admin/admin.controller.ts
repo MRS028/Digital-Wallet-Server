@@ -9,7 +9,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
-    message: 'All users fetched successfully',
+    message: 'All users retrieved successfully',
     data,
     meta,
   });
@@ -20,7 +20,7 @@ const getAllAgents = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
-    message: 'All agents fetched successfully',
+    message: 'All agents retrieved successfully',
     data,
     meta,
   });
@@ -31,7 +31,7 @@ const getAllWallets = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
-    message: 'All wallets fetched successfully',
+    message: 'All wallets retrieved successfully',
     data,
     meta,
   });
@@ -42,7 +42,7 @@ const getAllTransactions = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
-    message: 'All transactions fetched successfully',
+    message: 'All transactions retrieved successfully',
     data,
     meta,
   });

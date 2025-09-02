@@ -7,7 +7,7 @@ import { AgentService } from './agent.service';
 const cashIn = catchAsync(async (req: Request, res: Response) => {
   const { receiverPhoneNumber, amount } = req.body;
   const { transaction, agentNewBalance } = await AgentService.cashIn(req.user.id, receiverPhoneNumber, amount);
-  const formattedAgentNewBalance = agentNewBalance.toFixed(3);
+  const formattedAgentNewBalance = Number(agentNewBalance.toFixed(3));
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
@@ -19,7 +19,7 @@ const cashIn = catchAsync(async (req: Request, res: Response) => {
 const cashOut = catchAsync(async (req: Request, res: Response) => {
   const { senderPhoneNumber, amount } = req.body;
   const { transaction, agentNewBalance } = await AgentService.cashOut(req.user.id, senderPhoneNumber, amount);
-  const formattedAgentNewBalance = agentNewBalance.toFixed(3);
+  const formattedAgentNewBalance = Number(agentNewBalance.toFixed(3));
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,

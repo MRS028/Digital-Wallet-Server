@@ -45,7 +45,7 @@ router.get(
 
 router.get(
   "/all-users",
-  checkAuth(UserRole.ADMIN, UserRole.SUPER_ADMIN), // Only admins can view all users
+  checkAuth(UserRole.ADMIN, UserRole.SUPER_ADMIN),
   UserController.getAllUsers
 );
 
