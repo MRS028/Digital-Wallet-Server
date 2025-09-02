@@ -71,9 +71,7 @@ const cashIn = async (agentId: string, receiverPhoneNumber: string, amount: numb
     await session.commitTransaction();
     session.endSession();
 
-    return { transaction: transaction[0], agentNewBalance: agentWallet.balance, 
-      // userNewBalance: receiverWallet.balance 
-    };
+    return { transaction: transaction[0], agentNewBalance: agentWallet.balance };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -148,7 +146,7 @@ const cashOut = async (agentId: string, senderPhoneNumber: string, amount: numbe
     await session.commitTransaction();
     session.endSession();
 
-    return { transaction: transaction[0], agentNewBalance: agentWallet.balance, userNewBalance: senderWallet.balance };
+    return { transaction: transaction[0], agentNewBalance: agentWallet.balance };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();

@@ -6,23 +6,25 @@ import { AgentService } from './agent.service';
 
 const cashIn = catchAsync(async (req: Request, res: Response) => {
   const { receiverPhoneNumber, amount } = req.body;
-  const { transaction, agentNewBalance, userNewBalance } = await AgentService.cashIn(req.user.id, receiverPhoneNumber, amount);
+  const { transaction, agentNewBalance } = await AgentService.cashIn(req.user.id, receiverPhoneNumber, amount);
+  const formattedAgentNewBalance = agentNewBalance.toFixed(3);
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
     message: 'Cash-in completed successfully',
-    data: { transaction, agentNewBalance, userNewBalance },
+    data: { transaction, agentNewBalance: formattedAgentNewBalance },
   });
 });
 
 const cashOut = catchAsync(async (req: Request, res: Response) => {
   const { senderPhoneNumber, amount } = req.body;
-  const { transaction, agentNewBalance, userNewBalance } = await AgentService.cashOut(req.user.id, senderPhoneNumber, amount);
+  const { transaction, agentNewBalance } = await AgentService.cashOut(req.user.id, senderPhoneNumber, amount);
+  const formattedAgentNewBalance = agentNewBalance.toFixed(3);
   sendResponse(res, {
     httpStatus: httpStatus.OK,
     success: true,
     message: 'Cash-out completed successfully',
-    data: { transaction, agentNewBalance, userNewBalance },
+    data: { transaction, agentNewBalance: formattedAgentNewBalance },
   });
 });
 
