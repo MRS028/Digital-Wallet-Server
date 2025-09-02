@@ -8,7 +8,11 @@ let server: Server;
 
 const startServer = async () => {
   try {
-    await mongoose.connect(envVars.DB_URL);
+    console.log("Attempting to connect to MongoDB with URL:", envVars.DB_URL);
+    await mongoose.connect(envVars.DB_URL, {
+      connectTimeoutMS: 100000,
+      socketTimeoutMS: 100000,
+    });
     console.log("Connected to MongoDB ✅");
     server = app.listen(envVars.PORT, () => {
       console.log(`Server is running on port: ${envVars.PORT}`);
@@ -23,30 +27,26 @@ const startServer = async () => {
   await seedSuperAdmin();
 })();
 
+const isServerless = !!process.env.VERCEL;
+
 process.on("unhandledRejection", (error) => {
-  console.log(
-    "UnhandledRejection error detected ....Server shutting down",
-    error
-  );
-  if (server) {
-    server.close(() => {
+  console.log("UnhandledRejection error detected", error);
+  if (!isServerless) {
+    if (server) {
+      server.close(() => process.exit(1));
+    } else {
       process.exit(1);
-    });
-  } else {
-    process.exit(1);
+    }
   }
 });
 
 process.on("uncaughtException", (error) => {
-  console.log(
-    "UncaughtException error detected ....Server shutting down",
-    error
-  );
-  if (server) {
-    server.close(() => {
+  console.log("UncaughtException error detected", error);
+  if (!isServerless) {
+    if (server) {
+      server.close(() => process.exit(1));
+    } else {
       process.exit(1);
-    });
-  } else {
-    process.exit(1);
+    }
   }
 });

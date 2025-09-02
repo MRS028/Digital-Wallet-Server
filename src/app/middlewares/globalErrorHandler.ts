@@ -26,11 +26,15 @@ export const globalErrorHandlers = (
 
   };
 
-  // show stack trace only in development
-  if (envVars.NODE_ENV === "development") {
-    responsePayload.stack = error.stack;
-    responsePayload.errorName = error.name;
-  }
+  // Always show stack trace and error name for debugging
+  responsePayload.stack = error.stack;
+  responsePayload.errorName = error.name;
+
+  // Optionally, keep the development-only check if desired for production
+  // if (envVars.NODE_ENV === "development") {
+  //   responsePayload.stack = error.stack;
+  //   responsePayload.errorName = error.name;
+  // }
 
   res.status(statusCode).json(responsePayload);
 };
