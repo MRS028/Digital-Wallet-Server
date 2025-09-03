@@ -16,10 +16,12 @@ interface EnvConfig {
   RATE_LIMIT_WINDOW_MS?: string;
   RATE_LIMIT_MAX_REQUESTS?: string;
   INITIAL_BALANCE: string;
+  JWT_REFRESH_SECRET: string;
+  JWT_REFRESH_EXPIRES_IN: string;
 }
 
 const loadEnvVariables = (): EnvConfig => {
-  const requiredEnvVariables = ["PORT", "DB_URL", "NODE_ENV", "JWT_SECRET", "JWT_EXPIRES_IN", "BCRYPT_SALT_ROUNDS", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD", "INITIAL_BALANCE"];
+  const requiredEnvVariables = ["PORT", "DB_URL", "NODE_ENV", "JWT_SECRET", "JWT_EXPIRES_IN", "BCRYPT_SALT_ROUNDS", "SUPER_ADMIN_EMAIL", "SUPER_ADMIN_PASSWORD", "INITIAL_BALANCE", "JWT_REFRESH_SECRET", "JWT_REFRESH_EXPIRES_IN"];
 
 requiredEnvVariables.forEach((envVariable) => {
   if (!process.env[envVariable]) {
@@ -41,6 +43,8 @@ requiredEnvVariables.forEach((envVariable) => {
     RATE_LIMIT_WINDOW_MS: process.env.RATE_LIMIT_WINDOW_MS as string,
     RATE_LIMIT_MAX_REQUESTS: process.env.RATE_LIMIT_MAX_REQUESTS as string,
     INITIAL_BALANCE: process.env.INITIAL_BALANCE as string,
+    JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET as string,
+    JWT_REFRESH_EXPIRES_IN: process.env.JWT_REFRESH_EXPIRES_IN as string,
   };
 };
 

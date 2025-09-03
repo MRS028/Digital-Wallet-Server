@@ -25,9 +25,11 @@ export interface IUserQuery {
 }
 
 
+import { Types } from 'mongoose';
 import { agentStatus } from '../agent/agent.interface'; // Import agentStatus
 
 export interface IUser {
+  _id?: Types.ObjectId;
   name: string;
   email: string;
   password?: string;

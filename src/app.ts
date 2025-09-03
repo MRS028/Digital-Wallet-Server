@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { router } from "./app/routes";
 import notfound from "./app/middlewares/notFoundRoute";
 import { globalErrorHandlers } from "./app/middlewares/globalErrorHandler";
@@ -7,6 +8,7 @@ import morgan from "morgan";
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
 app.use(morgan("dev"));
 

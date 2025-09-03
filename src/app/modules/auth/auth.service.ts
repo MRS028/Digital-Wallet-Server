@@ -10,6 +10,8 @@ import { Wallet } from "../wallet/wallet.model";
 import { UserRole } from "../user/user.interface";
 import { envVars } from "../../config/env";
 import mongoose from "mongoose";
+import { generateToken } from "../../utils/jwt";
+import { createNewAccessTokenWithRefreshToken, createUserToken } from "../../utils/userTokens";
 
 const registerUser = async (payload: Partial<IUser>) => {
   const session = await mongoose.startSession();
@@ -58,7 +60,7 @@ const registerUser = async (payload: Partial<IUser>) => {
             agentCode: newAgentCode,
             status: agentStatus.PENDING, 
             commissionRate: Number(envVars.AGENT_COMMISSION),
-            auths: [{ provider: "credentials", providerId: email as string }], // Populate auths
+            auths: [{ provider: "credentials", providerId: email as string }], 
           },
         ],
         { session }
@@ -72,7 +74,7 @@ const registerUser = async (payload: Partial<IUser>) => {
             phoneNumber: phoneNumber as string,
             password: hashedPassword,
             role: role || UserRole.USER,
-            auths: [{ provider: "credentials", providerId: email as string }], // Populate auths
+            auths: [{ provider: "credentials", providerId: email as string }], 
           },
         ],
         { session }
@@ -133,21 +135,25 @@ const credentialsLogin = async (payload: Partial<IUser>) => {
   if (!isPasswordMatched) {
     throw new customError("Invalid email or password", httpStatus.UNAUTHORIZED);
   }
-  const jwtPayload = {
-    id: isUserExist._id,
-    email: isUserExist.email,
-    role: isUserExist.role,
-  };
-  const accessToken = jwt.sign(jwtPayload, envVars.JWT_SECRET, {
-    expiresIn: envVars.JWT_EXPIRES_IN} as SignOptions,
-  );
+const userTokens = createUserToken(isUserExist);
+
+  const {password: pwd, ...userData} = isUserExist.toObject();
 
   return {
-    accessToken
+    ...userTokens,
+    user: userData
   }
 };
 
+
+const getNewAccessToken = async (refreshToken: string) => {
+  const newAccessToken = await createNewAccessTokenWithRefreshToken(
+    refreshToken
+  );
+  return { accessToken: newAccessToken };
+};
 export const AuthService = {
   registerUser,
-  credentialsLogin
+  credentialsLogin,
+  getNewAccessToken
 };
