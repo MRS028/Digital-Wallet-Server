@@ -56,9 +56,33 @@ const getNewAccessToken = catchAsync(
     });
   }
 );
+const logout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+     res.clearCookie('accessToken', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+    });
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+    });
+
+
+    sendResponse(res, {
+      success: true,
+      httpStatus: httpStatus.OK,
+      message: "Logout successful",
+      data: null,
+    });
+  }
+);
+
 
 export const AuthController = {
     register,
     credentialsLogin,
-    getNewAccessToken
+    getNewAccessToken,
+    logout
 };
